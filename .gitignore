@@ -28,6 +28,9 @@ pip-delete-this-directory.txt
 *.pem
 .bedrock_agentcore.yaml
 
+# Include .amazonq folder (TODO lists and CLI config)
+# .amazonq/
+
 # Environment variables
 .env
 .env.local
