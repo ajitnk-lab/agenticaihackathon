@@ -13,7 +13,7 @@
     "synth": "cdk synth",
     "bootstrap": "cdk bootstrap",
     "deploy:mcp-servers": "npm run deploy:security-mcp && npm run deploy:account-discovery && npm run deploy:cost-analysis && npm run deploy:report-generator",
-    "deploy:security-mcp": "echo 'Deploying Well-Architected Security MCP Server'",
+    "deploy:security-mcp": "python deploy-mcp.py",
     "deploy:account-discovery": "echo 'Deploying Account Discovery MCP Server'",
     "deploy:cost-analysis": "echo 'Deploying Cost Analysis MCP Server'",
     "deploy:report-generator": "echo 'Deploying Report Generator MCP Server'",
