@@ -7,6 +7,7 @@ import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as bedrock from 'aws-cdk-lib/aws-bedrock';
 import { Construct } from 'constructs';
 
 export class SecurityInfrastructureStack extends cdk.Stack {
@@ -17,6 +18,8 @@ export class SecurityInfrastructureStack extends cdk.Stack {
   public readonly distribution: cloudfront.Distribution;
   public readonly securityMcpFunction: lambda.Function;
   public readonly accountDiscoveryFunction: lambda.Function;
+  public readonly bedrockAgent: bedrock.CfnAgent;
+  public readonly agentRole: iam.Role;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -521,6 +524,75 @@ def get_account_metadata(params):
       },
     });
 
+    // Bedrock Agent Role for Security Orchestrator
+    this.agentRole = new iam.Role(this, 'BedrockAgentRole', {
+      assumedBy: new iam.ServicePrincipal('bedrock.amazonaws.com'),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName('SecurityAudit'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('ReadOnlyAccess'),
+      ],
+      inlinePolicies: {
+        BedrockAgentPolicy: new iam.PolicyDocument({
+          statements: [
+            new iam.PolicyStatement({
+              effect: iam.Effect.ALLOW,
+              actions: [
+                'bedrock:InvokeModel',
+                'bedrock:InvokeModelWithResponseStream',
+                'agentcore:*',
+                'dynamodb:PutItem',
+                'dynamodb:GetItem',
+                'dynamodb:Query',
+                's3:GetObject',
+                's3:PutObject',
+              ],
+              resources: [
+                'arn:aws:bedrock:*::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0',
+                this.securityFindingsTable.tableArn,
+                `${this.reportsBucket.bucketArn}/*`,
+              ],
+            }),
+          ],
+        }),
+      },
+    });
+
+    // Deploy Well-Architected Security MCP to AgentCore
+    const mcpServerBucket = new s3.Bucket(this, 'McpServerBucket', {
+      bucketName: `security-mcp-server-${cdk.Aws.ACCOUNT_ID}-${cdk.Aws.REGION}`,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // Package and upload MCP server code
+    const mcpServerAsset = lambda.Code.fromAsset('./mcp-servers', {
+      bundling: {
+        image: lambda.Runtime.PYTHON_3_10.bundlingImage,
+        command: [
+          'bash', '-c',
+          'pip install -r pyproject.toml -t /asset-output && cp -r src/* /asset-output/'
+        ],
+      },
+    });
+
+    // Create Bedrock Agent for Security Orchestrator
+    this.bedrockAgent = new bedrock.CfnAgent(this, 'SecurityOrchestratorAgent', {
+      agentName: 'SecurityOrchestratorAgent',
+      description: 'Multi-Account AWS Security Orchestrator Agent for hackathon',
+      foundationModel: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+      agentResourceRoleArn: this.agentRole.roleArn,
+      instruction: `You are a Multi-Account AWS Security Orchestrator Agent. Your role is to:
+1. Discover AWS accounts in an organization
+2. Analyze security posture across multiple accounts
+3. Correlate cross-account security risks
+4. Provide cost-aware security recommendations
+5. Generate executive reports
+
+Use the available MCP tools to perform comprehensive security analysis and provide actionable insights.`,
+      idleSessionTtlInSeconds: 1800,
+    });
+
     // Outputs
     new cdk.CfnOutput(this, 'VpcId', {
       value: this.vpc.vpcId,
@@ -565,6 +637,16 @@ def get_account_metadata(params):
     new cdk.CfnOutput(this, 'AccountDiscoveryFunctionName', {
       value: this.accountDiscoveryFunction.functionName,
       description: 'Lambda function for Account Discovery MCP server',
+    });
+
+    new cdk.CfnOutput(this, 'BedrockAgentId', {
+      value: this.bedrockAgent.attrAgentId,
+      description: 'Bedrock Agent ID for Security Orchestrator',
+    });
+
+    new cdk.CfnOutput(this, 'BedrockAgentArn', {
+      value: this.bedrockAgent.attrAgentArn,
+      description: 'Bedrock Agent ARN for Security Orchestrator',
     });
   }
 }

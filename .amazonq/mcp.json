@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "well-architected-security": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "./mcp-servers/well-architected-security-mcp-server",
+        "run",
+        "server.py"
+      ],
+      "env": {
+        "AWS_PROFILE": "default",
+        "AWS_REGION": "us-east-1",
+        "FASTMCP_LOG_LEVEL": "DEBUG"
+      }
+    },
+    "aws-api": {
+      "command": "uvx",
+      "args": [
+        "awslabs.aws-api-mcp-server"
+      ],
+      "env": {
+        "AWS_PROFILE": "default",
+        "AWS_REGION": "us-east-1"
+      }
+    }
+  }
+}
