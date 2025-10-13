@@ -7,7 +7,7 @@ import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Construct } from 'constructs';
 
-export class SecurityOrchestratorStack extends cdk.Stack {
+export class SecurityInfrastructureStack extends cdk.Stack {
   public readonly vpc: ec2.Vpc;
   public readonly securityFindingsTable: dynamodb.Table;
   public readonly reportsBucket: s3.Bucket;
@@ -18,7 +18,7 @@ export class SecurityOrchestratorStack extends cdk.Stack {
     super(scope, id, props);
 
     // VPC with private subnets for secure deployment
-    this.vpc = new ec2.Vpc(this, 'SecurityOrchestratorVpc', {
+    this.vpc = new ec2.Vpc(this, 'SecurityInfrastructureVpc', {
       maxAzs: 2,
       natGateways: 1,
       subnetConfiguration: [
@@ -129,7 +129,7 @@ export class SecurityOrchestratorStack extends cdk.Stack {
     // Outputs
     new cdk.CfnOutput(this, 'VpcId', {
       value: this.vpc.vpcId,
-      description: 'VPC ID for Security Orchestrator',
+      description: 'VPC ID for Security Infrastructure',
     });
 
     new cdk.CfnOutput(this, 'SecurityFindingsTableName', {
