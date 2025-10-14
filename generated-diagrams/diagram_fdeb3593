@@ -1,0 +1,33 @@
+digraph "Security ROI Calculator" {
+	graph [fontcolor="#2D3436" fontname="Sans-Serif" fontsize=15 label="Security ROI Calculator" nodesep=0.60 pad=2.0 rankdir=TB ranksep=0.75 splines=ortho]
+	node [fixedsize=true fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 height=1.4 imagescale=true labelloc=b shape=box style=rounded width=1.4]
+	edge [color="#7B8894"]
+	"3f394f651174440894861b7b9c474cf8" [label="Executive
+(CFO/CISO)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/general/user.png" shape=none]
+	ed6c8d7ec2ff4509bec38e5fcfc439ea [label="Bedrock Agent
+Claude 3.5 Sonnet" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/ml/bedrock.png" shape=none]
+	"677e2b6a5f7c481eafa1199bbb9b51cf" [label="Lambda
+Orchestrator" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/compute/lambda.png" shape=none]
+	"15abcb9adf97413e9052762ad58976d5" [label="Security Analysis
+AgentCore Runtime" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/compute/lambda.png" shape=none]
+	f3f3b9ee58d147a39f08a22d292c4469 [label="Cost Analysis
+AgentCore Runtime" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/compute/lambda.png" shape=none]
+	"6fc30cdbd5634c659c86030e3ec7ef94" [label="AWS Organizations
+50+ Accounts" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/management/organizations.png" shape=none]
+	fb239823123b44778d596cf56ffa9ea3 [label="Security Services
+(Mock Data)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/security/security-hub.png" shape=none]
+	"749ec895241945a793171b470b6d72e8" [label="Cost Services
+(Mock Data)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/cost/cost-explorer.png" shape=none]
+	"3f394f651174440894861b7b9c474cf8" -> ed6c8d7ec2ff4509bec38e5fcfc439ea [label="Request ROI Analysis" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	ed6c8d7ec2ff4509bec38e5fcfc439ea -> "677e2b6a5f7c481eafa1199bbb9b51cf" [label=Orchestrate dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"677e2b6a5f7c481eafa1199bbb9b51cf" -> "15abcb9adf97413e9052762ad58976d5" [label="Analyze Security" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"677e2b6a5f7c481eafa1199bbb9b51cf" -> f3f3b9ee58d147a39f08a22d292c4469 [label="Analyze Costs" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"6fc30cdbd5634c659c86030e3ec7ef94" -> "15abcb9adf97413e9052762ad58976d5" [label="Account Discovery" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"6fc30cdbd5634c659c86030e3ec7ef94" -> f3f3b9ee58d147a39f08a22d292c4469 [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"15abcb9adf97413e9052762ad58976d5" -> fb239823123b44778d596cf56ffa9ea3 [label="Mock Security Data" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	f3f3b9ee58d147a39f08a22d292c4469 -> "749ec895241945a793171b470b6d72e8" [label="Mock Cost Data" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"15abcb9adf97413e9052762ad58976d5" -> "677e2b6a5f7c481eafa1199bbb9b51cf" [label="Score: 75/100" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	f3f3b9ee58d147a39f08a22d292c4469 -> "677e2b6a5f7c481eafa1199bbb9b51cf" [label="Cost: $97/month" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"677e2b6a5f7c481eafa1199bbb9b51cf" -> ed6c8d7ec2ff4509bec38e5fcfc439ea [label="ROI Report" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	ed6c8d7ec2ff4509bec38e5fcfc439ea -> "3f394f651174440894861b7b9c474cf8" [label="Executive Summary" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+}

@@ -1,0 +1,73 @@
+digraph "Security ROI Calculator - Architecture" {
+	graph [fontcolor="#2D3436" fontname="Sans-Serif" fontsize=15 label="Security ROI Calculator - Architecture" nodesep=0.60 pad=2.0 rankdir=LR ranksep=0.75 splines=ortho]
+	node [fixedsize=true fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 height=1.4 imagescale=true labelloc=b shape=box style=rounded width=1.4]
+	edge [color="#7B8894"]
+	subgraph "cluster_Executive Dashboard" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="Executive Dashboard" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		f05169a57a824fbab5bb7470e3ace776 [label="CFO/CISO" height=1.9 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/general/user.png" shape=none]
+		"5e3e14fde9064033bee75ff88a91869f" [label="Security Team" height=1.9 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/general/users.png" shape=none]
+	}
+	subgraph "cluster_AI Orchestration Layer" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="AI Orchestration Layer" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"44d7a7d51dc94b98804f9bfeba1fe6e9" [label="Bedrock Agent
+(Claude 3.5 Sonnet)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/ml/bedrock.png" shape=none]
+		"07460c7acc344b78aa62226b1ef15760" [label="Security Orchestrator
+Lambda" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/compute/lambda.png" shape=none]
+	}
+	subgraph "cluster_AgentCore Runtimes" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="AgentCore Runtimes" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"3002a14e91724ccc9cfdd3ae424716c1" [label="Security Analysis
+AgentCore Runtime" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/compute/lambda.png" shape=none]
+		e391ce208a3548b684dfcccc60ec4636 [label="Cost Analysis
+AgentCore Runtime" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/compute/lambda.png" shape=none]
+	}
+	subgraph "cluster_Multi-Account Discovery" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="Multi-Account Discovery" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		e9e1b2f273864a3da081aec6f39c5b69 [label="AWS Organizations
+Account Discovery" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/management/organizations.png" shape=none]
+		a09c1f2147b2467f86000bf772377701 [label="50+ AWS Accounts" height=1.9 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/general/users.png" shape=none]
+	}
+	subgraph "cluster_AWS Security Services" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="AWS Security Services" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"8e96b3c43fba43f5ad50133c51acec05" [label="Security Hub
+(Mock Findings)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/security/security-hub.png" shape=none]
+		"8b1a8aac6ebb48d19042a3c7336e3690" [label="GuardDuty
+(Mock Threats)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/security/guardduty.png" shape=none]
+		c7b81a9b10b24e9db4ddc7c4a3c0824e [label="Inspector
+(Mock Vulnerabilities)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/security/inspector.png" shape=none]
+		"8baea474b56f4ca582c7eb2d11d675f4" [label="Config
+(Mock Compliance)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/management/systems-manager.png" shape=none]
+	}
+	subgraph "cluster_Cost Analysis Services" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="Cost Analysis Services" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"3921d6b5c7964ca9a8f24b3af5575791" [label="Cost Explorer
+(Mock Billing)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/cost/cost-explorer.png" shape=none]
+		"1eeb997f78dc44aa9aa35656a2781c22" [label="Cost Analytics
+(Mock ROI)" height=2.3 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/analytics/athena.png" shape=none]
+	}
+	subgraph cluster_Monitoring {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label=Monitoring labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"0534c88816e546e681ed45ec72f29b2d" [label="CloudWatch Logs" height=1.9 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/management/cloudwatch-logs.png" shape=none]
+		"8dfe1503fd90438cb14567a0256c4f84" [label="Security Alerts" height=1.9 image="/persistent/home/ubuntu/.cache/uv/archive-v0/kMKKyCKhMaynHsgFEli4G/lib/python3.10/site-packages/resources/aws/integration/simple-notification-service-sns.png" shape=none]
+	}
+	f05169a57a824fbab5bb7470e3ace776 -> "44d7a7d51dc94b98804f9bfeba1fe6e9" [label="Request Analysis" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"5e3e14fde9064033bee75ff88a91869f" -> "44d7a7d51dc94b98804f9bfeba1fe6e9" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"44d7a7d51dc94b98804f9bfeba1fe6e9" -> "07460c7acc344b78aa62226b1ef15760" [label=Orchestrate dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"07460c7acc344b78aa62226b1ef15760" -> "3002a14e91724ccc9cfdd3ae424716c1" [label="Security Analysis" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"07460c7acc344b78aa62226b1ef15760" -> e391ce208a3548b684dfcccc60ec4636 [label="Cost Analysis" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"3002a14e91724ccc9cfdd3ae424716c1" -> "8e96b3c43fba43f5ad50133c51acec05" [label="Mock Security Data" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"3002a14e91724ccc9cfdd3ae424716c1" -> "8b1a8aac6ebb48d19042a3c7336e3690" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"3002a14e91724ccc9cfdd3ae424716c1" -> c7b81a9b10b24e9db4ddc7c4a3c0824e [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"3002a14e91724ccc9cfdd3ae424716c1" -> "8baea474b56f4ca582c7eb2d11d675f4" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	e391ce208a3548b684dfcccc60ec4636 -> "3921d6b5c7964ca9a8f24b3af5575791" [label="Mock Cost Data" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	e391ce208a3548b684dfcccc60ec4636 -> "1eeb997f78dc44aa9aa35656a2781c22" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	e9e1b2f273864a3da081aec6f39c5b69 -> a09c1f2147b2467f86000bf772377701 [label="Account Discovery" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	a09c1f2147b2467f86000bf772377701 -> "3002a14e91724ccc9cfdd3ae424716c1" [label="Multi-Account Analysis" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	a09c1f2147b2467f86000bf772377701 -> e391ce208a3548b684dfcccc60ec4636 [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"3002a14e91724ccc9cfdd3ae424716c1" -> "07460c7acc344b78aa62226b1ef15760" [label="Security Score: 75/100" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	e391ce208a3548b684dfcccc60ec4636 -> "07460c7acc344b78aa62226b1ef15760" [label="Monthly Cost: $97" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"07460c7acc344b78aa62226b1ef15760" -> "44d7a7d51dc94b98804f9bfeba1fe6e9" [label="ROI Analysis" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"44d7a7d51dc94b98804f9bfeba1fe6e9" -> f05169a57a824fbab5bb7470e3ace776 [label="Executive Report" dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"07460c7acc344b78aa62226b1ef15760" -> "0534c88816e546e681ed45ec72f29b2d" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"3002a14e91724ccc9cfdd3ae424716c1" -> "8dfe1503fd90438cb14567a0256c4f84" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+}
