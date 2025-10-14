@@ -1,0 +1,260 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Security Orchestrator API",
+    "description": "Multi-account AWS security analysis with cost optimization",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/analyze_security_posture": {
+      "post": {
+        "summary": "Analyze AWS account security posture",
+        "description": "Performs comprehensive security analysis using Well-Architected Framework principles",
+        "operationId": "analyzeSecurityPosture",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "string",
+                    "description": "AWS account ID to analyze",
+                    "example": "039920874011"
+                  },
+                  "region": {
+                    "type": "string",
+                    "description": "AWS region for analysis",
+                    "default": "us-east-1",
+                    "example": "us-east-1"
+                  }
+                },
+                "required": ["account_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Security analysis results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    },
+                    "security_score": {
+                      "type": "number"
+                    },
+                    "critical_findings": {
+                      "type": "number"
+                    },
+                    "recommendations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_security_findings": {
+      "post": {
+        "summary": "Get security findings by severity",
+        "description": "Retrieves security findings from Security Hub, GuardDuty, and Inspector",
+        "operationId": "getSecurityFindings",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "string",
+                    "description": "AWS account ID",
+                    "example": "039920874011"
+                  },
+                  "severity": {
+                    "type": "string",
+                    "description": "Finding severity level",
+                    "enum": ["HIGH", "MEDIUM", "LOW"],
+                    "default": "HIGH",
+                    "example": "HIGH"
+                  }
+                },
+                "required": ["account_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Security findings results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    },
+                    "findings_count": {
+                      "type": "number"
+                    },
+                    "severity": {
+                      "type": "string"
+                    },
+                    "top_findings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_security_costs": {
+      "post": {
+        "summary": "Get security service costs",
+        "description": "Retrieves current security service costs for an AWS account",
+        "operationId": "getSecurityCosts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "string",
+                    "description": "AWS account ID",
+                    "example": "039920874011"
+                  },
+                  "days": {
+                    "type": "integer",
+                    "description": "Number of days to analyze",
+                    "default": 30,
+                    "example": 30
+                  }
+                },
+                "required": ["account_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Security cost analysis results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    },
+                    "period_days": {
+                      "type": "number"
+                    },
+                    "total_security_cost": {
+                      "type": "number"
+                    },
+                    "service_costs": {
+                      "type": "object"
+                    },
+                    "currency": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calculate_security_roi": {
+      "post": {
+        "summary": "Calculate security investment ROI",
+        "description": "Calculates return on investment for security recommendations",
+        "operationId": "calculateSecurityROI",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "investments": {
+                    "type": "array",
+                    "description": "Array of security investment objects",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "annual_cost": {
+                          "type": "number",
+                          "description": "Annual cost of investment"
+                        },
+                        "potential_savings": {
+                          "type": "number",
+                          "description": "Potential annual savings"
+                        }
+                      }
+                    },
+                    "example": [
+                      {"annual_cost": 1200, "potential_savings": 50000},
+                      {"annual_cost": 800, "potential_savings": 25000}
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ROI calculation results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_annual_investment": {
+                      "type": "number"
+                    },
+                    "total_potential_savings": {
+                      "type": "number"
+                    },
+                    "net_annual_benefit": {
+                      "type": "number"
+                    },
+                    "roi_percentage": {
+                      "type": "number"
+                    },
+                    "currency": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

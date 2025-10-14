@@ -1,0 +1,12 @@
+{
+  "agentId": "LKQIWEYEMZ",
+  "agentVersion": "DRAFT",
+  "actionGroupName": "SecurityAnalysisActions",
+  "description": "Security analysis actions",
+  "actionGroupExecutor": {
+    "lambda": "arn:aws:lambda:us-east-1:039920874011:function:security-orchestrator-bedrock-agent"
+  },
+  "apiSchema": {
+    "payload": "{\"openapi\":\"3.0.0\",\"info\":{\"title\":\"Security API\",\"version\":\"1.0.0\"},\"paths\":{\"/analyze\":{\"post\":{\"summary\":\"Analyze security\",\"operationId\":\"analyze\",\"requestBody\":{\"content\":{\"application/json\":{\"schema\":{\"type\":\"object\",\"properties\":{\"account_id\":{\"type\":\"string\"}}}}}},\"responses\":{\"200\":{\"description\":\"Success\",\"content\":{\"application/json\":{\"schema\":{\"type\":\"object\"}}}}}}}}}"
+  }
+}

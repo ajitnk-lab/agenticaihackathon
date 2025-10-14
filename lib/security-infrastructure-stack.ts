@@ -648,5 +648,10 @@ Use the available MCP tools to perform comprehensive security analysis and provi
       value: this.bedrockAgent.attrAgentArn,
       description: 'Bedrock Agent ARN for Security Orchestrator',
     });
+
+    new cdk.CfnOutput(this, 'OrchestratorFunctionArn', {
+      value: 'arn:aws:lambda:us-east-1:039920874011:function:security-orchestrator-bedrock-agent',
+      description: 'Lambda function ARN for Bedrock Agent integration',
+    });
   }
 }
