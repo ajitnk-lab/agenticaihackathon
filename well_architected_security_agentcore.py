@@ -2,6 +2,7 @@
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 import json
 import boto3
+from account_discovery import get_target_accounts
 
 app = BedrockAgentCoreApp()
 
@@ -64,11 +65,13 @@ async def handler(event):
         
         # Parse tool calls from prompt
         if "analyze_security_posture" in prompt.lower() or "security posture" in prompt.lower():
-            account_id = "039920874011"  # Default account
+            accounts = get_target_accounts()
+            account_id = accounts[0] if accounts else "unknown"
             result = analyze_security_posture(account_id)
             
         elif "get_security_findings" in prompt.lower() or "security findings" in prompt.lower():
-            account_id = "039920874011"  # Default account
+            accounts = get_target_accounts()
+            account_id = accounts[0] if accounts else "unknown"
             result = get_security_findings(account_id)
             
         else:
@@ -80,7 +83,7 @@ async def handler(event):
                     "get_security_findings - Get security findings from multiple services"
                 ],
                 "usage": "Include tool name in prompt to execute",
-                "example": "Analyze security posture for account 039920874011"
+                "example": "Analyze security posture for organization accounts"
             }
         
         return {"body": json.dumps(result, indent=2)}

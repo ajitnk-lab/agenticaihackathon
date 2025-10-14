@@ -2,6 +2,7 @@
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 import json
 import boto3
+from account_discovery import get_target_accounts
 
 app = BedrockAgentCoreApp()
 
@@ -55,7 +56,8 @@ async def handler(event):
         
         # Parse tool calls from prompt
         if "get_security_costs" in prompt.lower():
-            account_id = "039920874011"  # Default for demo
+            accounts = get_target_accounts()
+            account_id = accounts[0] if accounts else "unknown"
             result = get_security_costs(account_id)
             
         elif "calculate_security_roi" in prompt.lower():
@@ -74,7 +76,7 @@ async def handler(event):
                     "calculate_security_roi - Calculate ROI for security investments"
                 ],
                 "usage": "Include tool name in prompt to execute",
-                "example": "Get security costs for account 039920874011"
+                "example": "Get security costs for organization accounts"
             }
         
         return {"body": json.dumps(result, indent=2)}
