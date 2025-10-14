@@ -2,8 +2,8 @@
 import asyncio
 import json
 import sys
-from account_discovery import get_organization_accounts, get_target_accounts
-from multi_account_orchestrator import analyze_all_accounts
+from src.utils.account_discovery import get_organization_accounts, get_target_accounts
+from src.utils.multi_account_orchestrator import analyze_all_accounts
 
 def test_single_account(account_id=None):
     """Test single account analysis"""

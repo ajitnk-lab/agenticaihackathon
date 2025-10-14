@@ -17,8 +17,9 @@ This is a **proof-of-concept** showing AI orchestration capabilities with mock d
 ## 📁 **Project Structure**
 ```
 ├── src/
-│   ├── agentcore/          # AgentCore runtime implementations
-│   └── lambda/             # Lambda function for Bedrock Agent integration
+│   ├── agentcore/          # AgentCore runtime implementations (2 runtimes)
+│   ├── lambda/             # Lambda function for Bedrock Agent integration
+│   └── utils/              # Utility modules (account discovery, orchestration)
 ├── tests/                  # Test scripts and demo examples
 ├── scripts/                # Deployment and setup scripts
 ├── docs/                   # Documentation and project details

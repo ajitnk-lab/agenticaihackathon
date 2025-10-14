@@ -2,7 +2,7 @@
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 import json
 import boto3
-from account_discovery import get_target_accounts
+from src.utils.account_discovery import get_target_accounts
 
 app = BedrockAgentCoreApp()
 
