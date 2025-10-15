@@ -17,6 +17,24 @@
 - [ ] **Real ROI Calculation**: No genuine cost-benefit analysis
 - [ ] **Cross-Account Validation**: Cannot actually access other accounts
 
+## 🚨 **CRITICAL PRIORITY: AgentCore Memory Primitive Implementation**
+
+### **Why This Is Critical for Hackathon:**
+- ❌ **Currently missing "strongly recommended" AgentCore primitive requirement**
+- ⚠️ **Technical Execution (50% of judging) is weakened without primitives**
+- ✅ **Memory primitive adds genuine business value to Security ROI Calculator**
+
+### **Memory Primitive Implementation Tasks:**
+- [ ] **Research AgentCore Memory primitive API** - Understand EventMemory and SemanticMemory
+- [ ] **Update security AgentCore runtime** - Add memory storage for security assessments
+- [ ] **Update cost AgentCore runtime** - Add memory storage for cost data
+- [ ] **Implement historical storage** - Store security scores, costs, findings over time
+- [ ] **Add trend analysis** - Retrieve and analyze historical data for ROI trends
+- [ ] **Update Lambda orchestrator** - Handle memory-based queries and trend requests
+- [ ] **Test with mock historical data** - Demonstrate 6 months of security improvements
+- [ ] **Update architecture diagrams** - Show Memory primitive integration
+- [ ] **Update documentation** - Highlight AgentCore primitive compliance
+
 ## 🎯 **IMMEDIATE PRIORITIES (Next 24 Hours)**
 
 ### 🎬 **Honest Demo Preparation**

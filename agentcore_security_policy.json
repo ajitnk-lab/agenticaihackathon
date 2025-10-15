@@ -1,0 +1,146 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "guardduty:ListDetectors",
+                "guardduty:GetDetector",
+                "guardduty:ListFindings",
+                "guardduty:GetFindings"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "inspector2:ListFindings",
+                "inspector2:BatchGetAccountStatus",
+                "inspector2:GetConfiguration",
+                "inspector2:ListCoverage"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "access-analyzer:ListAnalyzers",
+                "access-analyzer:ListFindings",
+                "access-analyzer:GetAnalyzer"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "securityhub:GetFindings",
+                "securityhub:DescribeHub",
+                "securityhub:GetInsightResults",
+                "securityhub:ListEnabledProductsForImport"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "macie2:GetMacieSession",
+                "macie2:ListFindings",
+                "macie2:GetFindings"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "support:DescribeTrustedAdvisorChecks",
+                "support:DescribeTrustedAdvisorCheckResult"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets",
+                "s3:GetBucketEncryption",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketPublicAccessBlock"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeVolumes",
+                "ec2:DescribeVpcs",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeNetworkAcls",
+                "ec2:DescribeInstances"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "rds:DescribeDBInstances",
+                "rds:DescribeDBClusters"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:ListTables",
+                "dynamodb:DescribeTable"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "efs:DescribeFileSystems"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticache:DescribeCacheClusters",
+                "elasticache:DescribeReplicationGroups"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "elasticloadbalancing:DescribeListeners",
+                "elasticloadbalancing:DescribeSSLPolicies"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "apigateway:GET"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudfront:ListDistributions",
+                "cloudfront:GetDistribution"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "config:DescribeConfigRules",
+                "config:GetComplianceDetailsByConfigRule",
+                "config:DescribeComplianceByConfigRule"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

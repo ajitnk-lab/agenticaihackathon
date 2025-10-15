@@ -1,0 +1,41 @@
+default_agent: well_architected_security_comprehensive
+agents:
+  well_architected_security_comprehensive:
+    name: well_architected_security_comprehensive
+    entrypoint: /persistent/home/ubuntu/workspace/agenticaihackathon/deployment/well_architected_security_comprehensive.py
+    platform: linux/arm64
+    container_runtime: docker
+    source_path: /persistent/home/ubuntu/workspace/agenticaihackathon/deployment
+    aws:
+      execution_role: arn:aws:iam::039920874011:role/AmazonBedrockAgentCoreSDKRuntime-us-east-1-8f397ed7fe
+      execution_role_auto_create: false
+      account: 039920874011
+      region: us-east-1
+      ecr_repository: 039920874011.dkr.ecr.us-east-1.amazonaws.com/bedrock-agentcore-well_architected_security_comprehensive
+      ecr_auto_create: false
+      network_configuration:
+        network_mode: PUBLIC
+        network_mode_config: null
+      protocol_configuration:
+        server_protocol: HTTP
+      observability:
+        enabled: true
+    bedrock_agentcore:
+      agent_id: well_architected_security_comprehensive-YfJAys5DsJ
+      agent_arn: arn:aws:bedrock-agentcore:us-east-1:039920874011:runtime/well_architected_security_comprehensive-YfJAys5DsJ
+      agent_session_id: c9789553-0f66-40d8-bed1-770f19f7e81c
+    codebuild:
+      project_name: bedrock-agentcore-well_architected_security_comprehensive-builder
+      execution_role: arn:aws:iam::039920874011:role/AmazonBedrockAgentCoreSDKCodeBuild-us-east-1-8f397ed7fe
+      source_bucket: bedrock-agentcore-codebuild-sources-039920874011-us-east-1
+    memory:
+      mode: STM_ONLY
+      memory_id: well_architected_security_comprehensive_mem-kqwwulABUR
+      memory_arn: arn:aws:bedrock-agentcore:us-east-1:039920874011:memory/well_architected_security_comprehensive_mem-kqwwulABUR
+      memory_name: well_architected_security_comprehensive_mem
+      event_expiry_days: 30
+      first_invoke_memory_check_done: true
+      was_created_by_toolkit: true
+    authorizer_configuration: null
+    request_header_configuration: null
+    oauth_configuration: null

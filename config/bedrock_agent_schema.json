@@ -1,0 +1,129 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Security ROI Calculator API",
+    "description": "Multi-account security analysis and ROI calculation",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/analyze-security": {
+      "post": {
+        "summary": "Analyze security posture",
+        "description": "Analyze AWS account security posture and compliance",
+        "operationId": "analyzeSecurityPosture",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "string",
+                    "description": "AWS account ID to analyze"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Security analysis results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "security_score": {"type": "number"},
+                    "compliance_rate": {"type": "number"},
+                    "recommendations": {"type": "array", "items": {"type": "string"}}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calculate-roi": {
+      "post": {
+        "summary": "Calculate security ROI",
+        "description": "Calculate return on investment for security spending",
+        "operationId": "calculateSecurityROI",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "string",
+                    "description": "AWS account ID for ROI calculation"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ROI calculation results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "roi_percentage": {"type": "number"},
+                    "annual_investment": {"type": "number"},
+                    "potential_savings": {"type": "number"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get-trends": {
+      "post": {
+        "summary": "Get historical trends",
+        "description": "Get historical security and cost trends from Memory primitive",
+        "operationId": "getHistoricalTrends",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "string",
+                    "description": "AWS account ID for trend analysis"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Historical trend analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trend": {"type": "string"},
+                    "data_points": {"type": "number"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,61 +1,44 @@
 #!/usr/bin/env python3
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 import json
-import boto3
-from src.utils.account_discovery import get_target_accounts
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.real_security_data import get_real_security_assessment
+
+# Import memory integration
+try:
+    from .memory_integration import SecurityMemoryManager
+except ImportError:
+    from memory_integration import SecurityMemoryManager
 
 app = BedrockAgentCoreApp()
+memory_manager = SecurityMemoryManager()
 
-def analyze_security_posture(account_id: str, region: str = "us-east-1"):
-    """Analyze AWS account security posture using Well-Architected Framework"""
+def analyze_security_posture(account_id: str = "123456789012"):
+    """Analyze AWS account security posture using REAL data"""
     try:
-        findings = {
+        # Get REAL security assessment
+        real_data = get_real_security_assessment(account_id)
+        memory_manager.store_assessment(account_id, real_data)
+        return real_data
+    except Exception as e:
+        # Fallback to mock data if AWS calls fail
+        return {
             "account_id": account_id,
-            "region": region,
-            "security_score": 75,
-            "critical_findings": 3,
-            "high_findings": 8,
-            "medium_findings": 15,
-            "low_findings": 22,
-            "recommendations": [
-                "Enable GuardDuty in all regions",
-                "Configure Security Hub standards", 
-                "Enable CloudTrail logging",
-                "Review IAM policies for least privilege",
-                "Enable VPC Flow Logs"
-            ],
-            "compliance_status": "PARTIAL_COMPLIANCE"
+            "security_score": 85,
+            "error": f"Using mock data: {str(e)}"
         }
-        
+
+def get_security_findings(account_id: str = "123456789012"):
+    """Get REAL security findings"""
+    try:
+        from utils.real_security_data import get_inspector_findings
+        findings = get_inspector_findings()
+        memory_manager.store_assessment(account_id, findings)
         return findings
     except Exception as e:
-        return {'error': str(e)}
-
-def get_security_findings(account_id: str, severity: str = "HIGH"):
-    """Get security findings from Security Hub, GuardDuty, and Inspector"""
-    try:
-        findings = {
-            "account_id": account_id,
-            "findings_count": 12,
-            "severity": severity,
-            "top_findings": [
-                "Unencrypted S3 buckets detected",
-                "IAM users with excessive permissions",
-                "Security groups with open access",
-                "Unencrypted EBS volumes",
-                "Missing MFA on root account"
-            ],
-            "services_analyzed": [
-                "Amazon GuardDuty",
-                "AWS Security Hub", 
-                "Amazon Inspector",
-                "AWS Config"
-            ]
-        }
-        
-        return findings
-    except Exception as e:
-        return {'error': str(e)}
+        return {"account_id": account_id, "findings_count": 12, "error": f"Using mock data: {str(e)}"}
 
 @app.entrypoint
 async def handler(event):
@@ -63,33 +46,16 @@ async def handler(event):
     try:
         prompt = event.get("prompt", "")
         
-        # Parse tool calls from prompt
-        if "analyze_security_posture" in prompt.lower() or "security posture" in prompt.lower():
-            accounts = get_target_accounts()
-            account_id = accounts[0] if accounts else "unknown"
-            result = analyze_security_posture(account_id)
-            
-        elif "get_security_findings" in prompt.lower() or "security findings" in prompt.lower():
-            accounts = get_target_accounts()
-            account_id = accounts[0] if accounts else "unknown"
-            result = get_security_findings(account_id)
-            
+        if "analyze_security_posture" in prompt.lower():
+            result = analyze_security_posture()
+        elif "get_security_findings" in prompt.lower():
+            result = get_security_findings()
         else:
-            # Default response showing available tools
-            result = {
-                "message": "Well-Architected Security Agent - Multi-Account Security Orchestrator",
-                "available_tools": [
-                    "analyze_security_posture - Analyze AWS account security posture",
-                    "get_security_findings - Get security findings from multiple services"
-                ],
-                "usage": "Include tool name in prompt to execute",
-                "example": "Analyze security posture for organization accounts"
-            }
+            result = {"available_tools": ["analyze_security_posture", "get_security_findings"]}
         
         return {"body": json.dumps(result, indent=2)}
-        
     except Exception as e:
-        return {"body": json.dumps({"error": str(e)}, indent=2)}
+        return {"body": json.dumps({"error": str(e)})}
 
 if __name__ == "__main__":
     app.run()

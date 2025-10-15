@@ -1,0 +1,6 @@
+{
+  "actionGroup": "SecurityActions",
+  "apiPath": "/security",
+  "httpMethod": "POST",
+  "parameters": [{"name": "account_id", "value": "039920874011"}]
+}

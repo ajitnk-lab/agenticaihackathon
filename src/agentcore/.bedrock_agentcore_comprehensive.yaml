@@ -1,0 +1,48 @@
+name: well-architected-security-comprehensive
+description: Comprehensive Well-Architected Security Analysis with all MCP server tools
+version: 2.0.0
+
+runtimes:
+  - name: well-architected-security-comprehensive
+    file: well_architected_security_comprehensive.py
+    description: Complete security analysis including all AWS security services
+    
+environment:
+  region: us-east-1
+  
+dependencies:
+  - bedrock-agentcore
+  - boto3
+
+tools:
+  security_services:
+    - check_security_services
+  security_findings:
+    - get_security_findings
+  storage_security:
+    - check_storage_encryption
+  network_security:
+    - check_network_security
+  comprehensive:
+    - comprehensive_analysis
+
+supported_services:
+  security:
+    - guardduty
+    - inspector
+    - accessanalyzer
+    - securityhub
+    - trustedadvisor
+    - macie
+  storage:
+    - s3
+    - ebs
+    - rds
+    - dynamodb
+    - efs
+    - elasticache
+  network:
+    - elb
+    - vpc
+    - apigateway
+    - cloudfront

@@ -71,6 +71,38 @@
 - **Real Security Analysis**: No actual GuardDuty, Security Hub, or Config API calls
 - **Cross-Account Discovery**: Only lists account IDs, cannot access them
 
+## 📋 **Day 4 (Oct 14): AgentCore Memory Primitive Implementation** 🔄 **IN PROGRESS**
+
+### AgentCore Memory Primitive Integration (CRITICAL FOR HACKATHON)
+- [ ] Research AgentCore Memory primitive documentation and API
+- [ ] Update security analysis AgentCore runtime to use Memory primitive
+- [ ] Update cost analysis AgentCore runtime to use Memory primitive
+- [ ] Implement historical data storage for security assessments
+- [ ] Implement historical data retrieval for trend analysis
+- [ ] Add trend analysis functionality to show ROI improvements over time
+- [ ] Update Lambda orchestrator to handle memory-based queries
+- [ ] Test memory primitive integration with mock historical data
+- [ ] Update architecture diagrams to show Memory primitive usage
+- [ ] Update documentation to highlight AgentCore primitive compliance
+
+**Status**: 🔄 **0/10 tasks completed** - Critical for hackathon qualification
+
+**Why This Is Critical:**
+- ✅ **Meets "strongly recommended" AgentCore primitive requirement**
+- ✅ **Strengthens Technical Execution (50% of judging criteria)**
+- ✅ **Adds genuine business value** - Historical trend analysis for executives
+- ✅ **Demonstrates learning capability** - Agent learns from past assessments
+
+## 📋 **Day 5 (Oct 15): Demo Video Creation** 📅 **PLANNED**
+
+### Mandatory Submission Requirements
+- [ ] Create 3-minute demo video showing end-to-end agentic workflow
+- [ ] Demonstrate Memory primitive usage and historical trend analysis
+- [ ] Show executive-level ROI insights and recommendations
+- [ ] Upload video to YouTube/Vimeo for submission
+
+**Status**: 📅 **PLANNED** - Mandatory for submission
+
 ## 📋 **Day 5-7: REMAINING WORK FOR REAL IMPLEMENTATION**
 
 ### 🔧 **Real Multi-Account Implementation** ❌ **NOT STARTED**

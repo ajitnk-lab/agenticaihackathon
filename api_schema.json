@@ -1,0 +1,35 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Security Analysis API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/analyze": {
+      "post": {
+        "description": "Analyze security posture",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "string",
+                    "description": "AWS account ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Security analysis results"
+          }
+        }
+      }
+    }
+  }
+}

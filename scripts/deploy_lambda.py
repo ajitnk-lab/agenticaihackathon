@@ -1,104 +1,114 @@
 #!/usr/bin/env python3
-"""
-Deploy Security Orchestrator Lambda Function
-"""
+"""Deploy Lambda function for Bedrock Agent integration"""
 
 import boto3
 import zipfile
-import json
 import os
+import json
 
-def create_lambda_function():
-    """Create and deploy the Lambda function"""
+def create_lambda_package():
+    """Create deployment package for Lambda"""
+    
+    # Create zip file
+    with zipfile.ZipFile('security-roi-lambda.zip', 'w') as zip_file:
+        # Add Lambda function
+        zip_file.write('src/lambda/bedrock_agent_lambda.py', 'lambda_function.py')
+    
+    print("✅ Lambda package created: security-roi-lambda.zip")
+    return 'security-roi-lambda.zip'
+
+def deploy_lambda_function():
+    """Deploy Lambda function to AWS"""
+    
+    lambda_client = boto3.client('lambda')
     
     # Create deployment package
-    with zipfile.ZipFile('security_orchestrator_lambda.zip', 'w') as zip_file:
-        zip_file.write('security_orchestrator_lambda.py')
-    
-    # Read the zip file
-    with open('security_orchestrator_lambda.zip', 'rb') as zip_file:
-        zip_content = zip_file.read()
-    
-    lambda_client = boto3.client('lambda', region_name='us-east-1')
-    iam_client = boto3.client('iam', region_name='us-east-1')
-    
-    # Create IAM role for Lambda
-    trust_policy = {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Principal": {
-                    "Service": "lambda.amazonaws.com"
-                },
-                "Action": "sts:AssumeRole"
-            }
-        ]
-    }
+    package_path = create_lambda_package()
     
     try:
-        role_response = iam_client.create_role(
-            RoleName='SecurityOrchestratorLambdaRole',
-            AssumeRolePolicyDocument=json.dumps(trust_policy),
-            Description='Role for Security Orchestrator Lambda function'
-        )
-        role_arn = role_response['Role']['Arn']
-        print(f"Created IAM role: {role_arn}")
-    except iam_client.exceptions.EntityAlreadyExistsException:
-        role_response = iam_client.get_role(RoleName='SecurityOrchestratorLambdaRole')
-        role_arn = role_response['Role']['Arn']
-        print(f"Using existing IAM role: {role_arn}")
-    
-    # Attach policies
-    policies = [
-        'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
-        'arn:aws:iam::aws:policy/AmazonBedrockFullAccess'
-    ]
-    
-    for policy in policies:
+        # Read zip file
+        with open(package_path, 'rb') as zip_file:
+            zip_content = zip_file.read()
+        
+        # Create or update Lambda function
+        function_name = 'security-roi-orchestrator'
+        
         try:
-            iam_client.attach_role_policy(
-                RoleName='SecurityOrchestratorLambdaRole',
-                PolicyArn=policy
+            # Try to update existing function
+            response = lambda_client.update_function_code(
+                FunctionName=function_name,
+                ZipFile=zip_content
             )
-            print(f"Attached policy: {policy}")
-        except Exception as e:
-            print(f"Policy already attached or error: {e}")
-    
-    # Wait for role to be ready
-    import time
-    time.sleep(10)
-    
-    # Create Lambda function
-    try:
-        response = lambda_client.create_function(
-            FunctionName='security-orchestrator-bedrock-agent',
-            Runtime='python3.10',
-            Role=role_arn,
-            Handler='security_orchestrator_lambda.lambda_handler',
-            Code={'ZipFile': zip_content},
-            Description='Security Orchestrator for Bedrock Agent',
-            Timeout=300,
-            MemorySize=512,
-            Environment={
-                'Variables': {
-                    'SECURITY_AGENT_ARN': 'arn:aws:bedrock-agentcore:us-east-1:039920874011:runtime/well_architected_security_agentcore-uBgBoaAnRs',
-                    'COST_AGENT_ARN': 'arn:aws:bedrock-agentcore:us-east-1:039920874011:runtime/cost_analysis_agentcore-UTdyrMH0Jo'
+            print(f"✅ Updated Lambda function: {function_name}")
+            
+        except lambda_client.exceptions.ResourceNotFoundException:
+            # Create new function
+            response = lambda_client.create_function(
+                FunctionName=function_name,
+                Runtime='python3.9',
+                Role='arn:aws:iam::123456789012:role/SecurityROILambdaRole',  # Update with actual role
+                Handler='lambda_function.lambda_handler',
+                Code={'ZipFile': zip_content},
+                Description='Security ROI Calculator - Bedrock Agent orchestrator',
+                Timeout=30,
+                Environment={
+                    'Variables': {
+                        'SECURITY_AGENTCORE_ENDPOINT': '',
+                        'COST_AGENTCORE_ENDPOINT': ''
+                    }
                 }
-            }
-        )
-        print(f"Created Lambda function: {response['FunctionArn']}")
+            )
+            print(f"✅ Created Lambda function: {function_name}")
+        
+        print(f"Function ARN: {response['FunctionArn']}")
         return response['FunctionArn']
         
-    except lambda_client.exceptions.ResourceConflictException:
-        # Update existing function
-        response = lambda_client.update_function_code(
-            FunctionName='security-orchestrator-bedrock-agent',
-            ZipFile=zip_content
-        )
-        print(f"Updated Lambda function: {response['FunctionArn']}")
-        return response['FunctionArn']
+    except Exception as e:
+        print(f"❌ Lambda deployment failed: {e}")
+        return None
+    
+    finally:
+        # Clean up
+        if os.path.exists(package_path):
+            os.remove(package_path)
+
+def test_lambda_function():
+    """Test Lambda function locally"""
+    
+    print("\n🧪 Testing Lambda function locally...")
+    
+    # Import Lambda function
+    import sys
+    sys.path.append('src/lambda')
+    from bedrock_agent_lambda import lambda_handler
+    
+    # Test security analysis
+    test_event = {
+        'actionGroup': 'security-analysis',
+        'apiPath': '/analyze-security',
+        'httpMethod': 'POST',
+        'requestBody': {'account_id': '123456789012'}
+    }
+    
+    result = lambda_handler(test_event, {})
+    response_body = json.loads(result['response']['responseBody']['application/json']['body'])
+    
+    print(f"✅ Security analysis test: Score = {response_body.get('security_score', 'N/A')}")
+    
+    # Test ROI calculation
+    test_event['apiPath'] = '/calculate-roi'
+    result = lambda_handler(test_event, {})
+    response_body = json.loads(result['response']['responseBody']['application/json']['body'])
+    
+    print(f"✅ ROI calculation test: ROI = {response_body.get('roi_percentage', 'N/A')}%")
 
 if __name__ == "__main__":
-    function_arn = create_lambda_function()
-    print(f"Lambda function ready: {function_arn}")
+    print("🚀 Deploying Security ROI Lambda Function...")
+    
+    # Test locally first
+    test_lambda_function()
+    
+    # Deploy to AWS (commented out for safety)
+    # function_arn = deploy_lambda_function()
+    print("\n💡 To deploy to AWS, uncomment the deploy_lambda_function() call")
+    print("💡 Make sure to update the IAM role ARN in the script first")

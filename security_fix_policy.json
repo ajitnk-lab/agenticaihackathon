@@ -1,0 +1,22 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "guardduty:ListDetectors",
+                "guardduty:GetDetector",
+                "guardduty:ListFindings",
+                "guardduty:GetFindings",
+                "access-analyzer:ListAnalyzers",
+                "access-analyzer:ListFindings",
+                "access-analyzer:GetAnalyzer",
+                "securityhub:GetFindings",
+                "securityhub:DescribeHub",
+                "inspector2:ListFindings",
+                "inspector2:BatchGetAccountStatus"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
