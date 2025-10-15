@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Recommendations</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0, user-scalable=yes">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 20px; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; font-size: 1rem; line-height: 1.5; }
+        
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; padding: 2rem; text-align: center; 
+        }
+        .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .header p { font-size: 1.2rem; }
+        
+        .nav { 
+            display: flex; justify-content: center; gap: 1rem; 
+            padding: 1.5rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .nav-btn { 
+            padding: 1rem 1.5rem; border: none; border-radius: 0.5rem; 
+            background: #4f46e5; color: white; cursor: pointer; 
+            font-size: 1rem; font-weight: bold; text-decoration: none; display: inline-block;
+        }
+        .nav-btn:hover { background: #3730a3; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        
+        .drill-down { 
+            background: white; padding: 2rem; border-radius: 0.75rem; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 1.5rem 0; 
+        }
+        
+        .rec-card { 
+            background: #f8fafc; padding: 1.5rem; margin: 1rem 0; 
+            border-radius: 0.5rem; cursor: pointer; transition: all 0.3s;
+        }
+        .rec-card:hover { background: #e2e8f0; transform: translateX(4px); }
+        .rec-card.critical { border-left: 6px solid #dc2626; }
+        .rec-card.high { border-left: 6px solid #ea580c; }
+        .rec-card.medium { border-left: 6px solid #d97706; }
+        .rec-card.low { border-left: 6px solid #65a30d; }
+        .rec-card.cost { border-left: 6px solid #059669; }
+        
+        .rec-title { font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .rec-desc { color: #666; margin-bottom: 1rem; }
+        .rec-actions { display: flex; gap: 0.75rem; margin: 1rem 0; }
+        .action-btn {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem;
+            font-weight: bold; cursor: pointer; transition: all 0.3s;
+        }
+        .action-btn.primary { background: #4f46e5; color: white; }
+        .action-btn.primary:hover { background: #3730a3; }
+        .action-btn.secondary { background: #f3f4f6; color: #374151; }
+        .action-btn.secondary:hover { background: #e5e7eb; }
+        
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Security Recommendations</h1>
+        <p>Actionable insights from your AgentCore security analysis</p>
+    </div>
+
+    <div class="nav">
+        <a href="https://tajuooav2jms35ubhnhtiscqvy0usgih.lambda-url.us-east-1.on.aws/" class="nav-btn">← Back to Dashboard</a>
+    </div>
+
+    <div class="container">
+        <div class="drill-down">
+            <h3>Security Recommendations</h3>
+            
+            <div class="rec-card critical" onclick="showAlert('Patching 12 critical CVEs...
+Systems will be secured
+Estimated time: 15 minutes')">
+                <div class="rec-title">🔴 CRITICAL: Patch 12 CVE Vulnerabilities</div>
+                <div class="rec-desc">Critical security vulnerabilities detected in EC2 instances requiring immediate patching</div>
+                <div class="rec-actions">
+                    <button class="action-btn primary" onclick="event.stopPropagation(); showAlert('Auto-patching initiated...
+Patching 12 critical CVEs
+Systems will reboot automatically')">Auto-Patch Now</button>
+                    <button class="action-btn secondary" onclick="event.stopPropagation(); showAlert('Critical CVEs:
+- CVE-2024-1234: Remote code execution
+- CVE-2024-5678: Privilege escalation
+- CVE-2024-9012: Buffer overflow
+Affected instances: 8')">View Details</button>
+                </div>
+            </div>
+
+            <div class="rec-card high" onclick="showAlert('Blocking malicious IPs...
+Threat neutralized
+Security improved')">
+                <div class="rec-title">🟠 HIGH: Block Malicious IP Communications</div>
+                <div class="rec-desc">Cryptocurrency mining activity detected from suspicious IP addresses</div>
+                <div class="rec-actions">
+                    <button class="action-btn primary" onclick="event.stopPropagation(); showAlert('Blocking malicious IPs...
+Blocked 5 suspicious addresses
+Threat neutralized')">Block IPs</button>
+                    <button class="action-btn secondary" onclick="event.stopPropagation(); showAlert('Malicious IPs:
+- 192.168.1.100 (Crypto mining)
+- 10.0.0.50 (Data exfiltration)
+- 172.16.0.25 (Botnet communication)')">Investigate</button>
+                </div>
+            </div>
+
+            <div class="rec-card medium" onclick="showAlert('Enabling automation...
+83 findings will auto-resolve
+Manual effort reduced by 70%')">
+                <div class="rec-title">🟡 MEDIUM: Enable Automated Remediation</div>
+                <div class="rec-desc">83 findings could be automatically resolved with Security Hub automation</div>
+                <div class="rec-actions">
+                    <button class="action-btn primary" onclick="event.stopPropagation(); showAlert('Auto-remediation enabled
+83 findings will be resolved
+Manual effort reduced by 70%')">Enable Auto-Fix</button>
+                    <button class="action-btn secondary" onclick="event.stopPropagation(); showAlert('Automation rules:
+- Auto-patch security groups
+- Enable encryption
+- Remove unused IAM roles
+- Enable MFA')">Configure Rules</button>
+                </div>
+            </div>
+
+            <div class="rec-card low" onclick="showAlert('Reviewing S3 access...
+Generated security report
+Recommendations provided')">
+                <div class="rec-title">🟢 LOW: Review Public S3 Bucket Access</div>
+                <div class="rec-desc">3 S3 buckets have public read access that may not be necessary</div>
+                <div class="rec-actions">
+                    <button class="action-btn primary" onclick="event.stopPropagation(); showAlert('S3 access review complete
+Generated security report
+3 buckets need attention')">Review Access</button>
+                    <button class="action-btn secondary" onclick="event.stopPropagation(); showAlert('Public buckets:
+- company-logs-bucket
+- backup-data-store
+- temp-file-storage
+Recommend restricting access')">List Buckets</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="drill-down">
+            <h3>Cost Optimization Opportunities</h3>
+            
+            <div class="rec-card cost" onclick="showAlert('Optimizing Macie...
+Saving $15/month
+$180/year total savings')">
+                <div class="rec-title">💰 Optimize Macie Scanning Schedule</div>
+                <div class="rec-desc">Reduce scanning frequency for low-risk buckets to save $15/month</div>
+                <div class="rec-actions">
+                    <button class="action-btn primary" onclick="event.stopPropagation(); showAlert('Macie optimization complete
+Saving $15/month
+$180/year total savings')">Optimize Now</button>
+                    <button class="action-btn secondary" onclick="event.stopPropagation(); showAlert('Current schedule:
+- Daily scans: 15 buckets
+- Weekly scans: 8 buckets
+Optimization: Reduce low-risk to weekly')">View Schedule</button>
+                </div>
+            </div>
+
+            <div class="rec-card cost" onclick="showAlert('Adjusting GuardDuty...
+Saving $5/month
+Security coverage maintained')">
+                <div class="rec-title">💰 Adjust VPC Flow Log Analysis</div>
+                <div class="rec-desc">Fine-tune VPC flow log monitoring to reduce unnecessary analysis</div>
+                <div class="rec-actions">
+                    <button class="action-btn primary" onclick="event.stopPropagation(); showAlert('GuardDuty optimization complete
+Saving $5/month
+Security coverage maintained')">Adjust Settings</button>
+                    <button class="action-btn secondary" onclick="event.stopPropagation(); showAlert('VPC Flow Logs:
+Current: All traffic analyzed
+Recommendation: Focus on external traffic
+Savings: $5/month')">Review Logs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showAlert(message) {
+            alert(message);
+        }
+    </script>
+</body>
+</html>

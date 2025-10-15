@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Recommendations</title>
+    <style>
+        body { font-family: Arial; padding: 20px; font-size: 18px; }
+        .rec-card { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .critical { border-left: 5px solid red; }
+        .high { border-left: 5px solid orange; }
+        .medium { border-left: 5px solid yellow; }
+        .low { border-left: 5px solid green; }
+        .cost { border-left: 5px solid blue; }
+    </style>
+</head>
+<body>
+    <h1>Security Recommendations Test</h1>
+    
+    <div class="rec-card critical">
+        <h3>🔴 CRITICAL: Patch 12 CVE Vulnerabilities</h3>
+        <p>Inspector found critical security vulnerabilities</p>
+        <button onclick="alert('Patching 12 critical CVEs...')">Patch Now</button>
+    </div>
+    
+    <div class="rec-card high">
+        <h3>🟠 HIGH: Block Malicious IPs</h3>
+        <p>GuardDuty detected cryptocurrency mining activity</p>
+        <button onclick="alert('Blocking malicious IPs...')">Block IPs</button>
+    </div>
+    
+    <div class="rec-card medium">
+        <h3>🟡 MEDIUM: Enable Auto-Remediation</h3>
+        <p>Security Hub can auto-fix 83 findings</p>
+        <button onclick="alert('Enabling automation...')">Enable Now</button>
+    </div>
+    
+    <div class="rec-card low">
+        <h3>🟢 LOW: Review S3 Public Access</h3>
+        <p>Access Analyzer found 3 public S3 buckets</p>
+        <button onclick="alert('Reviewing S3 access...')">Review Now</button>
+    </div>
+    
+    <div class="rec-card cost">
+        <h3>💰 Optimize Macie Scanning</h3>
+        <p>Save $15/month by optimizing scan schedule</p>
+        <button onclick="alert('Optimizing Macie...')">Optimize Now</button>
+    </div>
+    
+    <div class="rec-card cost">
+        <h3>💰 Adjust GuardDuty Logs</h3>
+        <p>Save $5/month by fine-tuning VPC logs</p>
+        <button onclick="alert('Adjusting GuardDuty...')">Adjust Now</button>
+    </div>
+</body>
+</html>
