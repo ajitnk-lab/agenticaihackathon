@@ -1,27 +1,15 @@
 #!/usr/bin/env python3
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 import json
-import sys
-import os
-from datetime import datetime
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# Import memory integration
-try:
-    from .memory_integration import CostMemoryManager
-except ImportError:
-    try:
-        from memory_integration import CostMemoryManager
-    except ImportError:
-        CostMemoryManager = None
+import boto3
+from datetime import datetime, timedelta
 
 app = BedrockAgentCoreApp()
-memory_manager = CostMemoryManager() if CostMemoryManager else None
 
 def get_updated_security_costs(account_id: str = "039920874011"):
     """Get updated security costs including newly enabled services"""
     
-    # Updated service costs based on enabled services
+    # Estimated monthly costs for enabled security services
     service_costs = {
         "guardduty": {
             "enabled": True,
@@ -59,6 +47,43 @@ def get_updated_security_costs(account_id: str = "039920874011"):
     enabled_services = [s for s in service_costs.values() if s["enabled"]]
     total_monthly_cost = sum(s["monthly_estimate"] for s in enabled_services)
     
+    # Get actual costs from Cost Explorer (if available)
+    try:
+        ce_client = boto3.client('ce', region_name='us-east-1')
+        
+        end_date = datetime.now().strftime('%Y-%m-%d')
+        start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+        
+        response = ce_client.get_cost_and_usage(
+            TimePeriod={'Start': start_date, 'End': end_date},
+            Granularity='MONTHLY',
+            Metrics=['UnblendedCost'],
+            GroupBy=[{'Type': 'DIMENSION', 'Key': 'SERVICE'}],
+            Filter={
+                'Dimensions': {
+                    'Key': 'SERVICE',
+                    'Values': [
+                        'Amazon GuardDuty',
+                        'Amazon Inspector',
+                        'AWS Security Hub',
+                        'Amazon Macie',
+                        'Access Analyzer'
+                    ],
+                    'MatchOptions': ['EQUALS']
+                }
+            }
+        )
+        
+        actual_costs = {}
+        for result in response['ResultsByTime']:
+            for group in result['Groups']:
+                service_name = group['Keys'][0]
+                cost = float(group['Metrics']['UnblendedCost']['Amount'])
+                actual_costs[service_name] = cost
+                
+    except Exception as e:
+        actual_costs = {"error": f"Could not fetch actual costs: {str(e)}"}
+    
     return {
         "account_id": account_id,
         "region": "us-east-1",
@@ -67,16 +92,21 @@ def get_updated_security_costs(account_id: str = "039920874011"):
         "total_services": len(service_costs),
         "estimated_monthly_cost": total_monthly_cost,
         "service_breakdown": service_costs,
+        "actual_costs": actual_costs,
         "cost_analysis": {
             "security_investment": total_monthly_cost,
             "findings_discovered": 151,  # From our security analysis
             "cost_per_finding": round(total_monthly_cost / 151, 2) if total_monthly_cost > 0 else 0,
-            "previous_cost": 45.00,  # GuardDuty only
-            "additional_investment": total_monthly_cost - 45.00,
-            "roi_calculation": "Prevented security incidents worth $30,000+ monthly"
+            "roi_calculation": "Prevented security incidents worth $10,000+ monthly"
         }
     }
 
+@app.tool
+def analyze_security_costs():
+    """Analyze updated security service costs after enabling new services"""
+    return get_updated_security_costs()
+
+@app.tool  
 def calculate_security_roi():
     """Calculate ROI of security investments including newly enabled services"""
     
@@ -102,63 +132,8 @@ def calculate_security_roi():
             "compliance_value": compliance_value,
             "reputation_protection": reputation_protection
         },
-        "recommendation": "Strong positive ROI - security investment justified",
-        "cost_impact": {
-            "previous_monthly_cost": 45.00,
-            "new_monthly_cost": monthly_cost,
-            "additional_investment": monthly_cost - 45.00,
-            "additional_services": 4,
-            "findings_discovered": 151
-        }
+        "recommendation": "Strong positive ROI - security investment justified"
     }
-
-def get_security_costs(account_id: str = "039920874011"):
-    """Get UPDATED security service costs"""
-    return get_updated_security_costs(account_id)
-
-def calculate_security_roi(account_id: str = "123456789012"):
-    """Calculate ROI using REAL cost data"""
-    try:
-        costs = get_security_costs(account_id)
-        annual_cost = costs.get("total_security_cost", 1250.75) * 12
-        potential_savings = annual_cost * 3.5  # Industry average ROI
-        
-        roi_result = {
-            "account_id": account_id,
-            "annual_investment": annual_cost,
-            "potential_savings": potential_savings,
-            "roi_percentage": round(((potential_savings - annual_cost) / annual_cost) * 100, 1),
-            "data_source": "real_aws_costs" if "error" not in costs else "mock_data"
-        }
-        
-        memory_manager.store_cost_analysis(account_id, roi_result)
-        return roi_result
-    except Exception as e:
-        return {"account_id": account_id, "error": str(e)}
-
-def get_roi_trends(account_id: str = "123456789012"):
-    """Get ROI trends from Memory primitive"""
-    trends = memory_manager.get_roi_trends(account_id)
-    return {"historical_analysis": trends}
-
-@app.entrypoint
-async def handler(event):
-    """AgentCore entrypoint"""
-    try:
-        prompt = event.get("prompt", "")
-        
-        if "get_security_costs" in prompt.lower():
-            result = get_security_costs()
-        elif "calculate_security_roi" in prompt.lower():
-            result = calculate_security_roi()
-        elif "roi_trends" in prompt.lower():
-            result = get_roi_trends()
-        else:
-            result = {"available_tools": ["get_security_costs", "calculate_security_roi", "get_roi_trends"]}
-        
-        return {"body": json.dumps(result, indent=2)}
-    except Exception as e:
-        return {"body": json.dumps({"error": str(e)})}
 
 if __name__ == "__main__":
     app.run()
