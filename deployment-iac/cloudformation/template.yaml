@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AgentCore Security Dashboard - Complete Infrastructure'
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: agentcore-security-dashboard
+    Description: Name of the project
+
+Resources:
+  # IAM Role for Lambda Functions
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${ProjectName}-lambda-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  # Main Dashboard Lambda Function
+  DashboardMainFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-main'
+      Runtime: python3.9
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      Code:
+        ZipFile: |
+          import json
+          def lambda_handler(event, context):
+              html = """<!DOCTYPE html>
+              <html><head><title>AgentCore Security Dashboard</title></head>
+              <body><h1>Dashboard Loading...</h1>
+              <p>Please deploy the complete assets for full functionality.</p>
+              </body></html>"""
+              return {
+                  'statusCode': 200,
+                  'headers': {'Content-Type': 'text/html'},
+                  'body': html
+              }
+
+  # Recommendations Lambda Function
+  DashboardRecommendationsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-recommendations'
+      Runtime: python3.9
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      Code:
+        ZipFile: |
+          import json
+          def lambda_handler(event, context):
+              html = """<!DOCTYPE html>
+              <html><head><title>Security Recommendations</title></head>
+              <body><h1>Recommendations Loading...</h1>
+              <p>Please deploy the complete assets for full functionality.</p>
+              </body></html>"""
+              return {
+                  'statusCode': 200,
+                  'headers': {'Content-Type': 'text/html'},
+                  'body': html
+              }
+
+  # Function URLs
+  DashboardMainFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      TargetFunctionArn: !GetAtt DashboardMainFunction.Arn
+      AuthType: NONE
+      Cors:
+        AllowCredentials: false
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - GET
+          - POST
+        AllowHeaders:
+          - "*"
+
+  DashboardRecommendationsFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      TargetFunctionArn: !GetAtt DashboardRecommendationsFunction.Arn
+      AuthType: NONE
+      Cors:
+        AllowCredentials: false
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - GET
+          - POST
+        AllowHeaders:
+          - "*"
+
+  # Permissions for Function URLs
+  DashboardMainFunctionUrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref DashboardMainFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: "*"
+      FunctionUrlAuthType: NONE
+
+  DashboardRecommendationsFunctionUrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref DashboardRecommendationsFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: "*"
+      FunctionUrlAuthType: NONE
+
+Outputs:
+  MainDashboardUrl:
+    Description: 'URL for the main dashboard'
+    Value: !GetAtt DashboardMainFunctionUrl.FunctionUrl
+    Export:
+      Name: !Sub '${ProjectName}-main-url'
+
+  RecommendationsUrl:
+    Description: 'URL for the recommendations page'
+    Value: !GetAtt DashboardRecommendationsFunctionUrl.FunctionUrl
+    Export:
+      Name: !Sub '${ProjectName}-recommendations-url'
+
+  LambdaRoleArn:
+    Description: 'ARN of the Lambda execution role'
+    Value: !GetAtt LambdaExecutionRole.Arn
+    Export:
+      Name: !Sub '${ProjectName}-lambda-role-arn'
