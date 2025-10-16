@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security ROI Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; font-size: 16px; }
+        
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; padding: 30px; text-align: center; 
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.2em; }
+        
+        .nav { 
+            display: flex; justify-content: center; gap: 15px; 
+            padding: 20px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            flex-wrap: wrap;
+        }
+        .nav-btn { 
+            padding: 15px 25px; border: none; border-radius: 8px; 
+            background: #4f46e5; color: white; cursor: pointer; 
+            font-size: 16px; font-weight: bold; transition: all 0.3s; 
+        }
+        .nav-btn:hover { background: #3730a3; transform: translateY(-2px); }
+        .nav-btn.active { background: #059669; }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px; }
+        
+        .metrics { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 25px; margin: 30px 0; 
+        }
+        .metric-card { 
+            background: white; padding: 30px; border-radius: 12px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; 
+            cursor: pointer; transition: all 0.3s; 
+        }
+        .metric-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+        .metric-value { font-size: 3em; font-weight: bold; color: #4f46e5; margin: 15px 0; }
+        .metric-label { font-size: 1.3em; font-weight: bold; margin-bottom: 10px; }
+        .metric-desc { color: #666; font-size: 1.1em; }
+        
+        .chart-container { 
+            background: white; padding: 30px; border-radius: 12px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 25px 0; 
+        }
+        .chart-title { font-size: 1.5em; font-weight: bold; margin-bottom: 20px; text-align: center; }
+        
+        .section { display: block; }
+        .section.hidden { display: none; }
+        
+        .loading { 
+            text-align: center; padding: 20px; font-size: 1.2em; 
+            color: #4f46e5; font-weight: bold; 
+        }
+        
+        .trend-status {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .trend-indicator {
+            display: flex; align-items: center; gap: 10px;
+            font-weight: bold; font-size: 1.1em;
+        }
+        .trend-up { color: #059669; }
+        .trend-down { color: #dc2626; }
+        .data-source { color: #6b7280; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Security ROI Dashboard</h1>
+        <p>Real-time AWS Security Analysis with AgentCore Memory Integration</p>
+    </div>
+
+    <div class="nav">
+        <button class="nav-btn active" onclick="showSection('overview')">Overview</button>
+        <button class="nav-btn" onclick="showSection('security')">Security</button>
+        <button class="nav-btn" onclick="showSection('cost')">Cost</button>
+        <button class="nav-btn" onclick="showSection('recommendations')">Recommendations</button>
+        <button class="nav-btn" onclick="showSection('tools')">Tools</button>
+        <button class="nav-btn" onclick="showSection('history')">Trend Patterns</button>
+    </div>
+
+    <div class="container">
+        <!-- Overview Section -->
+        <div id="overview" class="section">
+            <div class="metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Security Score</div>
+                    <div class="metric-value" id="security-score">85</div>
+                    <div class="metric-desc">Overall security posture</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total Findings</div>
+                    <div class="metric-value" id="total-findings">151</div>
+                    <div class="metric-desc">Security issues identified</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Cost</div>
+                    <div class="metric-value" id="monthly-cost">$128</div>
+                    <div class="metric-desc">Security services investment</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">ROI</div>
+                    <div class="metric-value" id="roi-value">23,337%</div>
+                    <div class="metric-desc">Return on security investment</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Security Findings Distribution</div>
+                <canvas id="overviewChart" style="max-height: 400px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Trend Pattern Section -->
+        <div id="history" class="section hidden">
+            <div class="trend-status">
+                <div class="trend-indicator trend-up" id="security-trend">
+                    🔒 Security Trend: <span id="security-trend-text">Loading...</span>
+                </div>
+                <div class="data-source" id="data-source">Data Source: AgentCore Memory</div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Security Score Trends (30 Days)</div>
+                <div class="loading" id="security-loading">🧠 Loading AgentCore Memory data...</div>
+                <canvas id="historyChart" style="max-height: 400px; display: none;"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Cost Investment Trends (6 Months)</div>
+                <div class="loading" id="cost-loading">🧠 Loading AgentCore Memory data...</div>
+                <canvas id="costTrendChart" style="max-height: 400px; display: none;"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">ROI Performance Trends</div>
+                <div class="loading" id="roi-loading">🧠 Loading AgentCore Memory data...</div>
+                <canvas id="roiTrendChart" style="max-height: 400px; display: none;"></canvas>
+            </div>
+        </div>
+
+        <!-- Other sections remain the same -->
+        <div id="security" class="section hidden">
+            <div class="chart-container">
+                <div class="chart-title">Security Findings by Service</div>
+                <canvas id="securityChart" style="max-height: 400px;"></canvas>
+            </div>
+        </div>
+
+        <div id="cost" class="section hidden">
+            <div class="chart-container">
+                <div class="chart-title">Security Service Costs</div>
+                <canvas id="costChart" style="max-height: 400px;"></canvas>
+            </div>
+        </div>
+
+        <div id="recommendations" class="section hidden">
+            <div class="chart-container">
+                <div class="chart-title">Security Recommendations</div>
+                <p>Recommendations will be loaded here...</p>
+            </div>
+        </div>
+
+        <div id="tools" class="section hidden">
+            <div class="chart-container">
+                <div class="chart-title">AgentCore Tools</div>
+                <div class="service-card" onclick="callAgentCore('security')">
+                    <div class="service-name">Call AgentCore Security Analysis</div>
+                    <div class="service-stats"><span>Live Data</span><span>Click to invoke</span></div>
+                </div>
+                <div class="service-card" onclick="callAgentCore('cost')">
+                    <div class="service-name">Call AgentCore Cost Analysis</div>
+                    <div class="service-stats"><span>Live Data</span><span>Click to invoke</span></div>
+                </div>
+                <div id="tool-output" class="hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let historyChart, costTrendChart, roiTrendChart;
+        
+        // Initialize charts when DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStaticCharts();
+            loadTrendData();
+        });
+
+        function initializeStaticCharts() {
+            // Overview Chart
+            new Chart(document.getElementById('overviewChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Critical', 'High', 'Medium', 'Low'],
+                    datasets: [{
+                        data: [12, 34, 67, 38],
+                        backgroundColor: ['#dc2626', '#ea580c', '#d97706', '#65a30d']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+
+            // Security Chart
+            new Chart(document.getElementById('securityChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['GuardDuty', 'Inspector', 'Security Hub', 'Macie', 'Access Analyzer'],
+                    datasets: [{
+                        label: 'Findings Count',
+                        data: [1, 61, 83, 0, 6],
+                        backgroundColor: ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            });
+
+            // Cost Chart
+            new Chart(document.getElementById('costChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['GuardDuty', 'Inspector', 'Security Hub', 'Macie', 'Access Analyzer'],
+                    datasets: [{
+                        data: [45, 25, 15, 35, 8],
+                        backgroundColor: ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        function loadTrendData() {
+            // Call AgentCore Memory backend for trend data
+            fetch('https://vxlk4vnqccr5jp7p4aln34wdge0xaudq.lambda-url.us-east-1.on.aws/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'trends' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateTrendCharts(data);
+                updateTrendStatus(data);
+            })
+            .catch(error => {
+                console.error('Error loading trend data:', error);
+                showFallbackTrends();
+            });
+        }
+
+        function updateTrendCharts(data) {
+            const securityTrends = data.security_trends;
+            const costTrends = data.cost_trends;
+            
+            // Hide loading indicators
+            document.getElementById('security-loading').style.display = 'none';
+            document.getElementById('cost-loading').style.display = 'none';
+            document.getElementById('roi-loading').style.display = 'none';
+            
+            // Show charts
+            document.getElementById('historyChart').style.display = 'block';
+            document.getElementById('costTrendChart').style.display = 'block';
+            document.getElementById('roiTrendChart').style.display = 'block';
+
+            // Security Trend Chart
+            historyChart = new Chart(document.getElementById('historyChart'), {
+                type: 'line',
+                data: {
+                    labels: securityTrends.labels,
+                    datasets: [{
+                        label: 'Security Score',
+                        data: securityTrends.security_scores,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { y: { beginAtZero: true, max: 100 } },
+                    plugins: { legend: { display: true } }
+                }
+            });
+
+            // Cost Trend Chart
+            costTrendChart = new Chart(document.getElementById('costTrendChart'), {
+                type: 'line',
+                data: {
+                    labels: costTrends.labels,
+                    datasets: [{
+                        label: 'Monthly Cost ($)',
+                        data: costTrends.monthly_costs,
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { y: { beginAtZero: true } },
+                    plugins: { legend: { display: true } }
+                }
+            });
+
+            // ROI Trend Chart
+            roiTrendChart = new Chart(document.getElementById('roiTrendChart'), {
+                type: 'line',
+                data: {
+                    labels: costTrends.labels,
+                    datasets: [{
+                        label: 'ROI (%)',
+                        data: costTrends.roi_percentages,
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { y: { beginAtZero: true } },
+                    plugins: { legend: { display: true } }
+                }
+            });
+        }
+
+        function updateTrendStatus(data) {
+            const securityTrend = data.security_trends.trend || 'improving';
+            const dataSource = data.source || 'AgentCore Memory';
+            
+            document.getElementById('security-trend-text').textContent = 
+                securityTrend.charAt(0).toUpperCase() + securityTrend.slice(1);
+            document.getElementById('data-source').textContent = `Data Source: ${dataSource}`;
+            
+            const trendElement = document.getElementById('security-trend');
+            if (securityTrend === 'improving') {
+                trendElement.className = 'trend-indicator trend-up';
+                trendElement.innerHTML = '🔒 Security Trend: <span id="security-trend-text">Improving</span>';
+            } else {
+                trendElement.className = 'trend-indicator trend-down';
+                trendElement.innerHTML = '⚠️ Security Trend: <span id="security-trend-text">Declining</span>';
+            }
+        }
+
+        function showFallbackTrends() {
+            // Show fallback static data if AgentCore Memory fails
+            const fallbackData = {
+                security_trends: {
+                    labels: ['30 days ago', '20 days ago', '10 days ago', 'Current'],
+                    security_scores: [75, 80, 82, 85],
+                    trend: 'improving'
+                },
+                cost_trends: {
+                    labels: ['6 months ago', '4 months ago', '2 months ago', 'Current'],
+                    monthly_costs: [45, 85, 118, 128],
+                    roi_percentages: [15000, 21000, 23000, 23337]
+                },
+                source: 'Fallback Data'
+            };
+            
+            updateTrendCharts(fallbackData);
+            updateTrendStatus(fallbackData);
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.remove('hidden');
+            event.target.classList.add('active');
+            
+            // Load trend data when history section is shown
+            if (sectionId === 'history' && !historyChart) {
+                loadTrendData();
+            }
+        }
+
+        function callAgentCore(type) {
+            const output = document.getElementById('tool-output');
+            output.classList.remove('hidden');
+            output.innerHTML = '<div class="loading">🤖 Calling AgentCore Runtime...</div>';
+            
+            // Call real AgentCore backend
+            fetch('https://vxlk4vnqccr5jp7p4aln34wdge0xaudq.lambda-url.us-east-1.on.aws/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: type })
+            })
+            .then(response => response.json())
+            .then(data => {
+                output.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            })
+            .catch(error => {
+                output.innerHTML = '<pre>Error calling AgentCore: ' + error.message + '</pre>';
+            });
+        }
+    </script>
+</body>
+</html>
