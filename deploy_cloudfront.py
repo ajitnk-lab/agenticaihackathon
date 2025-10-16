@@ -29,6 +29,46 @@ def deploy_ui():
         # Create CloudFront distribution
         distribution_config = {
             'CallerReference': str(int(time.time())),
+            'DefaultRootObject': 'index.html',
+            'Origins': {
+                'Quantity': 1,
+                'Items': [{
+                    'Id': bucket_name,
+                    'DomainName': f'{bucket_name}.s3.amazonaws.com',
+                    'S3OriginConfig': {
+                        'OriginAccessIdentity': ''
+                    }
+                }]
+            },
+            'DefaultCacheBehavior': {
+                'TargetOriginId': bucket_name,
+                'ViewerProtocolPolicy': 'redirect-to-https',
+                'TrustedSigners': {
+                    'Enabled': False,
+                    'Quantity': 0
+                },
+                'ForwardedValues': {
+                    'QueryString': False,
+                    'Cookies': {'Forward': 'none'}
+                }
+            },
+            'Comment': 'Security Dashboard',
+            'Enabled': True
+        }
+        
+        response = cloudfront.create_distribution(DistributionConfig=distribution_config)
+        domain = response['Distribution']['DomainName']
+        
+        print(f"✅ CloudFront URL: https://{domain}")
+        return f"https://{domain}"
+        
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return None
+
+if __name__ == "__main__":
+    deploy_ui()
+            'CallerReference': str(int(time.time())),
             'Comment': 'Security Dashboard',
             'DefaultRootObject': 'index.html',
             'Origins': {

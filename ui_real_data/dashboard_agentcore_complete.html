@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security ROI Dashboard - AgentCore</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 20px; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; font-size: 1rem; }
+        
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; padding: 2rem; text-align: center; 
+        }
+        .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        
+        .account-info {
+            background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 0.5rem;
+            margin-top: 1rem; display: flex; justify-content: center; gap: 2rem;
+        }
+        .account-detail { text-align: center; }
+        .account-label { font-size: 0.9rem; opacity: 0.8; }
+        .account-value { font-size: 1.1rem; font-weight: bold; }
+        
+        .nav { 
+            display: flex; justify-content: center; gap: 1rem; 
+            padding: 1.5rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .nav-btn { 
+            padding: 1rem 1.5rem; border: none; border-radius: 0.5rem; 
+            background: #4f46e5; color: white; cursor: pointer; 
+            font-size: 1rem; font-weight: bold;
+        }
+        .nav-btn.active { background: #059669; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        
+        .metrics { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 1.5rem; margin: 2rem 0; 
+        }
+        .metric-card { 
+            background: white; padding: 2rem; border-radius: 0.75rem; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; 
+            cursor: pointer;
+        }
+        .metric-value { font-size: 3rem; font-weight: bold; color: #4f46e5; margin: 1rem 0; }
+        .metric-label { font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .metric-desc { color: #6b7280; }
+        
+        .chart-container { 
+            background: white; padding: 2rem; border-radius: 0.75rem; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 1.5rem 0; 
+        }
+        .chart-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem; }
+        
+        .section { display: block; }
+        .section.hidden { display: none; }
+        
+        .agentcore-badge {
+            background: #10b981; padding: 0.5rem 1rem; border-radius: 1rem;
+            font-size: 0.8rem; font-weight: bold; margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Security ROI Dashboard</h1>
+        <p>AI-powered security orchestration with AgentCore Memory</p>
+        <div class="agentcore-badge">🤖 AGENTCORE AGENTS DATA</div>
+        <div class="account-info" id="account-info">
+            <div class="account-detail">
+                <div class="account-label">AWS Account</div>
+                <div class="account-value" id="account-id">Loading...</div>
+            </div>
+            <div class="account-detail">
+                <div class="account-label">Region</div>
+                <div class="account-value" id="region">us-east-1</div>
+            </div>
+            <div class="account-detail">
+                <div class="account-label">Data Source</div>
+                <div class="account-value" id="data-source">AgentCore</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav">
+        <button class="nav-btn active" onclick="showSection('dashboard')">Dashboard</button>
+        <button class="nav-btn" onclick="showSection('trends')">Trends</button>
+        <button class="nav-btn" onclick="showSection('services')">Services</button>
+        <button class="nav-btn" onclick="showSection('agentcore')">AgentCore Tools</button>
+    </div>
+
+    <div class="container">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section">
+            <div class="metrics">
+                <div class="metric-card" onclick="drillDown('security')">
+                    <div class="metric-label">Security Score</div>
+                    <div class="metric-value" id="security-score">Loading...</div>
+                    <div class="metric-desc">Overall security posture</div>
+                </div>
+                <div class="metric-card" onclick="drillDown('findings')">
+                    <div class="metric-label">Total Findings</div>
+                    <div class="metric-value" id="total-findings">Loading...</div>
+                    <div class="metric-desc">Security issues identified</div>
+                </div>
+                <div class="metric-card" onclick="drillDown('cost')">
+                    <div class="metric-label">Monthly Cost</div>
+                    <div class="metric-value" id="monthly-cost">Loading...</div>
+                    <div class="metric-desc">Security services investment</div>
+                </div>
+                <div class="metric-card" onclick="drillDown('roi')">
+                    <div class="metric-label">ROI</div>
+                    <div class="metric-value" id="roi-value">Loading...</div>
+                    <div class="metric-desc">Return on security investment</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trends Section -->
+        <div id="trends" class="section hidden">
+            <div class="chart-container">
+                <div class="chart-title">Security Score Trends (AgentCore Memory)</div>
+                <canvas id="securityChart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Cost Analysis Trends</div>
+                <canvas id="costChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Services Section -->
+        <div id="services" class="section hidden">
+            <h2>Security Services (From AgentCore Cost Agent)</h2>
+            <div id="services-list">Loading services...</div>
+        </div>
+
+        <!-- AgentCore Tools Section -->
+        <div id="agentcore" class="section hidden">
+            <h2>AgentCore Memory Integration</h2>
+            <div class="chart-container">
+                <h3>Security Agent Status</h3>
+                <p>Runtime ID: <strong>well_architected_security_comprehensive</strong></p>
+                <p>Status: <span id="security-agent-status">Active</span></p>
+            </div>
+            <div class="chart-container">
+                <h3>Cost Agent Status</h3>
+                <p>Runtime ID: <strong>cost_analysis_comprehensive</strong></p>
+                <p>Status: <span id="cost-agent-status">Active</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentData = null;
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.remove('hidden');
+            
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function drillDown(metric) {
+            alert(`Drilling down into ${metric} details from AgentCore agents`);
+        }
+
+        function loadAgentCoreData() {
+            const backendUrl = 'https://ypsypowqxwnme2drnpjdeodo5u0swlpk.lambda-url.us-east-1.on.aws/';
+            
+            fetch(backendUrl)
+                .then(response => response.json())
+                .then(data => {
+                    currentData = data;
+                    updateDashboard(data);
+                    updateCharts(data);
+                    updateServices(data);
+                })
+                .catch(error => {
+                    console.error('Error loading AgentCore data:', error);
+                    showError();
+                });
+        }
+        
+        function updateDashboard(data) {
+            if (data.security_data) {
+                document.getElementById('account-id').textContent = data.security_data.account_id || '039920874011';
+                document.getElementById('security-score').textContent = data.security_data.security_score || '0';
+                document.getElementById('total-findings').textContent = data.security_data.total_findings || '0';
+            }
+            
+            if (data.cost_data) {
+                document.getElementById('monthly-cost').textContent = `$${data.cost_data.total_monthly_cost || '0'}`;
+                
+                const roi = calculateROI(data.cost_data, data.security_data);
+                document.getElementById('roi-value').textContent = `${roi}%`;
+            }
+        }
+
+        function updateCharts(data) {
+            // Create sample trend data for charts
+            const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            const securityScores = [75, 80, 85, data.security_data?.security_score || 90];
+            const costs = [100, 110, 120, data.cost_data?.total_monthly_cost || 128];
+
+            // Security Chart
+            const secCtx = document.getElementById('securityChart').getContext('2d');
+            new Chart(secCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Security Score',
+                        data: securityScores,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            // Cost Chart
+            const costCtx = document.getElementById('costChart').getContext('2d');
+            new Chart(costCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Monthly Cost ($)',
+                        data: costs,
+                        backgroundColor: '#4f46e5'
+                    }]
+                },
+                options: { responsive: true }
+            });
+        }
+
+        function updateServices(data) {
+            const servicesList = document.getElementById('services-list');
+            
+            if (data.cost_data && data.cost_data.service_costs) {
+                let html = '';
+                Object.entries(data.cost_data.service_costs).forEach(([key, service]) => {
+                    html += `
+                        <div class="chart-container">
+                            <h3>${service.description.split(' - ')[0]}</h3>
+                            <p><strong>Cost:</strong> $${service.monthly_estimate}/month</p>
+                            <p><strong>Status:</strong> ${service.enabled ? 'Enabled' : 'Disabled'}</p>
+                            <p><strong>Description:</strong> ${service.description}</p>
+                        </div>
+                    `;
+                });
+                servicesList.innerHTML = html;
+            } else {
+                servicesList.innerHTML = '<p>No service data available</p>';
+            }
+        }
+        
+        function calculateROI(costData, securityData) {
+            if (!costData || !securityData) return '0';
+            
+            const totalCost = costData.total_monthly_cost || 1;
+            const securityScore = securityData.security_score || 0;
+            
+            const roi = ((securityScore - 50) * 100) / totalCost;
+            return roi.toFixed(1);
+        }
+        
+        function showError() {
+            document.getElementById('security-score').textContent = 'Error';
+            document.getElementById('total-findings').textContent = 'Error';
+            document.getElementById('monthly-cost').textContent = 'Error';
+            document.getElementById('roi-value').textContent = 'Error';
+        }
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadAgentCoreData);
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadAgentCoreData, 30000);
+    </script>
+</body>
+</html>

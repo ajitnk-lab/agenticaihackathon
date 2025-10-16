@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AgentCore Security Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; height: 100vh; display: flex; flex-direction: column; }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 20px; text-align: center;
+        }
+        .header h1 { font-size: 2rem; margin-bottom: 5px; }
+        .header p { font-size: 1rem; opacity: 0.9; }
+        
+        .chat-container {
+            flex: 1; display: flex; flex-direction: column; max-width: 800px;
+            margin: 0 auto; width: 100%; padding: 20px;
+        }
+        
+        .chat-messages {
+            flex: 1; background: white; border-radius: 12px; padding: 20px;
+            margin-bottom: 20px; overflow-y: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+        
+        .message {
+            margin-bottom: 15px; padding: 12px 16px; border-radius: 18px;
+            max-width: 80%; word-wrap: break-word;
+        }
+        
+        .user-message {
+            background: #4f46e5; color: white; margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .agent-message {
+            background: #f1f5f9; color: #334155; margin-right: auto;
+            border-bottom-left-radius: 4px; border-left: 4px solid #10b981;
+        }
+        
+        .system-message {
+            background: #fef3c7; color: #92400e; margin: 0 auto;
+            text-align: center; font-size: 0.9rem; border-radius: 12px;
+        }
+        
+        .typing-indicator {
+            background: #f1f5f9; color: #64748b; margin-right: auto;
+            border-bottom-left-radius: 4px; border-left: 4px solid #f59e0b;
+        }
+        
+        .typing-dots {
+            display: inline-block; position: relative; width: 40px; height: 10px;
+        }
+        
+        .typing-dots span {
+            position: absolute; top: 0; width: 6px; height: 6px;
+            border-radius: 50%; background: #64748b; animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dots span:nth-child(1) { left: 0; animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { left: 12px; animation-delay: -0.16s; }
+        .typing-dots span:nth-child(3) { left: 24px; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        
+        .input-container {
+            display: flex; gap: 10px; background: white; padding: 15px;
+            border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .message-input {
+            flex: 1; padding: 12px 16px; border: 2px solid #e2e8f0;
+            border-radius: 24px; font-size: 16px; outline: none;
+        }
+        
+        .message-input:focus { border-color: #4f46e5; }
+        
+        .send-button {
+            padding: 12px 24px; background: #4f46e5; color: white;
+            border: none; border-radius: 24px; cursor: pointer;
+            font-weight: bold; transition: background 0.3s;
+        }
+        
+        .send-button:hover { background: #3730a3; }
+        .send-button:disabled { background: #94a3b8; cursor: not-allowed; }
+        
+        .quick-questions {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;
+        }
+        
+        .quick-question {
+            padding: 8px 12px; background: #e2e8f0; color: #475569;
+            border: none; border-radius: 16px; cursor: pointer; font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        
+        .quick-question:hover { background: #cbd5e1; }
+        
+        .agent-status {
+            background: #d1fae5; color: #065f46; padding: 10px;
+            border-radius: 8px; margin-bottom: 15px; text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .error-message {
+            background: #fee2e2; color: #991b1b; padding: 10px;
+            border-radius: 8px; margin-bottom: 15px; text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 AgentCore Security Assistant</h1>
+        <p>Powered by Bedrock Agent + AgentCore Memory Integration</p>
+    </div>
+
+    <div class="chat-container">
+        <div class="agent-status" id="agentStatus">
+            ✅ Bedrock Agent connected • Security & Cost agents ready
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="system-message">
+                Welcome! I'm your AI security assistant powered by Bedrock Agent and AgentCore Memory.
+                Ask me about your security posture, findings, costs, or ROI analysis.
+            </div>
+        </div>
+        
+        <div class="quick-questions">
+            <button class="quick-question" onclick="sendQuickQuestion('What is my current security posture?')">
+                Security Posture
+            </button>
+            <button class="quick-question" onclick="sendQuickQuestion('Show me critical security findings')">
+                Critical Findings
+            </button>
+            <button class="quick-question" onclick="sendQuickQuestion('What am I spending on security services?')">
+                Security Costs
+            </button>
+            <button class="quick-question" onclick="sendQuickQuestion('Calculate my security ROI')">
+                ROI Analysis
+            </button>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" class="message-input" id="messageInput" 
+                   placeholder="Ask about your security posture, findings, costs, or ROI..."
+                   onkeypress="handleKeyPress(event)">
+            <button class="send-button" id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const agentStatus = document.getElementById('agentStatus');
+        
+        // Backend URL - will be replaced during deployment
+        const BACKEND_URL = 'BEDROCK_AGENT_BACKEND_URL';
+        
+        function addMessage(content, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.innerHTML = content;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message typing-indicator';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = 'Bedrock Agent is thinking... <div class="typing-dots"><span></span><span></span><span></span></div>';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        function updateAgentStatus(status, isError = false) {
+            agentStatus.textContent = status;
+            agentStatus.className = isError ? 'error-message' : 'agent-status';
+        }
+        
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            messageInput.value = '';
+            
+            // Disable input
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+            
+            // Show typing indicator
+            showTypingIndicator();
+            updateAgentStatus('🤖 Bedrock Agent orchestrating AgentCore agents...');
+            
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        sessionId: 'chatbot-session-' + Date.now()
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                hideTypingIndicator();
+                
+                if (data.error) {
+                    addMessage(`❌ Error: ${data.error}`, 'system');
+                    updateAgentStatus('❌ Bedrock Agent error', true);
+                } else {
+                    // Format the response from Bedrock Agent
+                    let formattedResponse = data.response || 'No response from Bedrock Agent';
+                    
+                    // Add agent info if available
+                    if (data.agentsUsed) {
+                        formattedResponse += `\\n\\n🤖 **Agents Used:** ${data.agentsUsed.join(', ')}`;
+                    }
+                    
+                    if (data.dataSource) {
+                        formattedResponse += `\\n📊 **Data Source:** ${data.dataSource}`;
+                    }
+                    
+                    addMessage(formattedResponse.replace(/\\n/g, '<br>'), 'agent');
+                    updateAgentStatus('✅ Bedrock Agent response complete');
+                }
+                
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage(`❌ Connection error: ${error.message}`, 'system');
+                updateAgentStatus('❌ Failed to connect to Bedrock Agent', true);
+            }
+            
+            // Re-enable input
+            sendButton.disabled = false;
+            messageInput.disabled = false;
+            messageInput.focus();
+        }
+        
+        function sendQuickQuestion(question) {
+            messageInput.value = question;
+            sendMessage();
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+        
+        // Focus input on load
+        window.addEventListener('load', () => {
+            messageInput.focus();
+        });
+        
+        // Test backend connection on load
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch(BACKEND_URL);
+                const data = await response.json();
+                if (data.status === 'healthy') {
+                    updateAgentStatus('✅ Bedrock Agent connected • Security & Cost agents ready');
+                } else {
+                    updateAgentStatus('⚠️ Bedrock Agent connection issues', true);
+                }
+            } catch (error) {
+                updateAgentStatus('❌ Cannot connect to Bedrock Agent', true);
+            }
+        });
+    </script>
+</body>
+</html>
