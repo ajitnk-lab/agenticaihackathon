@@ -78,12 +78,37 @@
         .service-card:hover { transform: translateY(-2px); }
         .service-name { font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; }
         .service-stats { display: flex; justify-content: space-between; color: #666; }
+        .account-info { background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .info-item { text-align: center; }
+        .info-label { font-size: 0.9rem; opacity: 0.8; }
+        .info-value { font-size: 1.1rem; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>Security ROI Dashboard</h1>
         <p>Real-time AWS Security Analysis with AgentCore Memory Integration</p>
+        <div class="account-info">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">AWS Account</div>
+                    <div class="info-value">039920874011</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Region</div>
+                    <div class="info-value">us-east-1</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Security Services</div>
+                    <div class="info-value">Inspector, Config, GuardDuty, Security Hub, Access Analyzer</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">AgentCore Agents</div>
+                    <div class="info-value">Security Agent + Cost Agent (Active)</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="nav">
